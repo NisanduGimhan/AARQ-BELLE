@@ -1,0 +1,100 @@
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Responsive Navigation: Hamburger only on Mobile & Tablet */
+@media screen and (min-width: 992px) {
+  .fs-navbar_menu-button,
+  .w-nav-button.fs-navbar_menu-button {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .fs-navbar_menu-button,
+  .w-nav-button.fs-navbar_menu-button {
+    display: flex !important;
+  }
+}
+
+/* Match Homepage Webflow IX2 Navbar Hover & Active States on Secondary Pages */
+.page-navbar .nav-link_item .nav-link_underline,
+.page-navbar .fs-menu-link .nav-link_underline,
+.page-navbar .footer_link .footer_link-underline {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-navbar .nav-link_item:hover .nav-link_underline,
+.page-navbar .nav-link_item.w--current .nav-link_underline,
+.page-navbar .fs-menu-link:hover .nav-link_underline,
+.page-navbar .fs-menu-link.w--current .nav-link_underline,
+.page-navbar .footer_link:hover .footer_link-underline {
+  transform: scaleX(1);
+}
+
+.page-navbar .button-bride .button-cover_bridge {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.page-navbar .button-bride:hover .button-cover_bridge {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.page-navbar .button-bride .button-t_bridge,
+.page-navbar .button-bride .button-icon-wrap_bridge {
+  transition: color 0.3s ease;
+}
+
+.page-navbar .button-bride:hover .button-t_bridge,
+.page-navbar .button-bride:hover .button-icon-wrap_bridge {
+  color: var(--swatch--light);
+}
+
+.page-navbar .button-animated.is-icon {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.page-navbar .button-animated.is-icon:hover {
+  transform: scale(1.05);
+}
+
+/* Smooth Portfolio & Cinematography Card Hover Animations */
+.portfolio_item .portfolio_image {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio_item:hover .portfolio_image {
+  transform: scale(1.06);
+}
+
+.portfolio_item .link-button {
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.portfolio_item:hover .link-button {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #000000;
+}
+
+.cinematography_component:hover .cinematography_thumb {
+  transform: scale(1.05) !important;
+}
+
+.cinematography_component .play-btn {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematography_component:hover .play-btn {
+  transform: scale(1.12);
+}

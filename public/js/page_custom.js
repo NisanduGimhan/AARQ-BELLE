@@ -92,43 +92,133 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 700);
 
-  // 2. Nav Menu Animation (Global)
-  const navLinks = document.querySelectorAll('.fs-menu-link, .fs-navbar_wrap');
-  const fsNavbarMenuButton = document.querySelector('.fs-navbar_menu-button');
+  // 2. Nav menu handler registered globally outside DOMContentLoaded (see section 2B below)
+});
 
-  window.isMenuOpen = window.isMenuOpen || false;
+// 2B. Homepage Mobile Nav Menu Drawer Controller (Delegated & Immune to DOMContentLoaded/IX2/w-nav timing)
+(function initHomeMobileMenu() {
+  window.isMenuOpen = false;
 
-  if (navLinks.length && fsNavbarMenuButton) {
-    gsap.set(navLinks, { opacity: 0.5, y: 100 });
+  function setHomeMenuOpen(navbar, menu, menuBtn, open) {
+    window.isMenuOpen = open;
+    const links = menu.querySelectorAll('.fs-menu-link, .fs-navbar_wrap');
+    const lineTop = menuBtn.querySelector('.menu-icon_line-top');
+    const lineMid = menuBtn.querySelector('.menu-icon_line-middle');
+    const lineBot = menuBtn.querySelector('.menu-icon_line-bottom');
 
-    function animateNavLinks() {
-      if (!window.isMenuOpen) {
-        gsap.to(navLinks, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.02,
-          ease: 'power2.out',
-          delay: 0.4
-        });
-        window.isMenuOpen = true;
-      } else {
-        gsap.to(navLinks, {
-          opacity: 0.5,
-          y: 100,
-          duration: 0.4,
-          stagger: 0.02,
-          ease: 'power2.out',
-          onComplete: () => {
-            window.isMenuOpen = false;
-          }
-        });
-      }
+    // Ensure menu is not trapped inside Webflow's hidden .w-nav-overlay
+    if (menu.parentElement && menu.parentElement.classList.contains('w-nav-overlay')) {
+      const wrapper = navbar.querySelector('.navbar_wrapper');
+      if (wrapper) wrapper.appendChild(menu);
     }
 
-    fsNavbarMenuButton.addEventListener('click', animateNavLinks);
+    if (open) {
+      menuBtn.classList.add('w--open');
+      menu.classList.add('w--open', 'is-home-open');
+      menu.setAttribute('data-nav-menu-open', '');
+      menuBtn.setAttribute('aria-expanded', 'true');
+
+      if (typeof lenis !== 'undefined' && lenis && typeof lenis.stop === 'function') {
+        lenis.stop();
+      }
+      document.body.style.overflow = 'hidden';
+
+      if (typeof gsap !== 'undefined') {
+        gsap.killTweensOf(menu);
+        gsap.set(menu, { display: 'block', yPercent: 0, y: 0 });
+        gsap.fromTo(menu, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+
+        if (links.length) {
+          gsap.killTweensOf(links);
+          gsap.fromTo(
+            links,
+            { opacity: 0, y: 36 },
+            { opacity: 1, y: 0, duration: 0.45, stagger: 0.04, ease: 'power2.out', delay: 0.1 }
+          );
+        }
+
+        if (lineTop) gsap.to(lineTop, { rotate: 45, x: 5, y: 8, width: 24, duration: 0.25 });
+        if (lineMid) gsap.to(lineMid, { opacity: 0, duration: 0.15 });
+        if (lineBot) gsap.to(lineBot, { rotate: -45, x: 5, y: -8, width: 24, duration: 0.25 });
+      } else {
+        menu.style.display = 'block';
+        menu.style.opacity = '1';
+      }
+    } else {
+      menuBtn.classList.remove('w--open');
+      menu.classList.remove('w--open', 'is-home-open');
+      menu.removeAttribute('data-nav-menu-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+
+      if (typeof lenis !== 'undefined' && lenis && typeof lenis.start === 'function') {
+        lenis.start();
+      }
+      document.body.style.overflow = '';
+
+      if (typeof gsap !== 'undefined') {
+        if (lineTop) gsap.to(lineTop, { rotate: 0, x: 0, y: 0, width: 24, duration: 0.25 });
+        if (lineMid) gsap.to(lineMid, { opacity: 1, duration: 0.2 });
+        if (lineBot) gsap.to(lineBot, { rotate: 0, x: 0, y: 0, width: 24, duration: 0.25 });
+
+        gsap.killTweensOf(menu);
+        gsap.to(menu, {
+          opacity: 0,
+          duration: 0.25,
+          ease: 'power2.in',
+          onComplete: () => {
+            if (!window.isMenuOpen) {
+              menu.style.display = 'none';
+            }
+          }
+        });
+      } else {
+        menu.style.opacity = '0';
+        menu.style.display = 'none';
+      }
+    }
   }
-});
+
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!target || typeof target.closest !== 'function') return;
+
+    const btn = target.closest('.navbar_component:not(.page-navbar) .fs-navbar_menu-button');
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const navbar = btn.closest('.navbar_component');
+      const menu = navbar ? navbar.querySelector('.fs-navbar_menu') : null;
+      if (navbar && menu) {
+        const currentlyOpen = menu.classList.contains('is-home-open');
+        setHomeMenuOpen(navbar, menu, btn, !currentlyOpen);
+      }
+      return;
+    }
+
+    // Close menu when clicking any link inside homepage mobile drawer
+    const drawerLink = target.closest('.navbar_component:not(.page-navbar) .fs-navbar_menu a');
+    if (drawerLink) {
+      const navbar = drawerLink.closest('.navbar_component');
+      const menu = navbar ? navbar.querySelector('.fs-navbar_menu') : null;
+      const menuBtn = navbar ? navbar.querySelector('.fs-navbar_menu-button') : null;
+      if (navbar && menu && menuBtn && menu.classList.contains('is-home-open')) {
+        setHomeMenuOpen(navbar, menu, menuBtn, false);
+      }
+    }
+  }, true);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.isMenuOpen) {
+      const navbar = document.querySelector('.navbar_component:not(.page-navbar)');
+      const menu = navbar ? navbar.querySelector('.fs-navbar_menu') : null;
+      const menuBtn = navbar ? navbar.querySelector('.fs-navbar_menu-button') : null;
+      if (navbar && menu && menuBtn) {
+        setHomeMenuOpen(navbar, menu, menuBtn, false);
+      }
+    }
+  });
+})();
 
 document.addEventListener("DOMContentLoaded", () => {
   // Dynamic update current year
@@ -217,15 +307,10 @@ document.addEventListener("click", function (e) {
       // If already on the homepage, scroll smoothly to top
       e.preventDefault();
 
-      // If mobile drawer is open, close it
+      // If mobile drawer is open, close it cleanly
       const menuButton = document.querySelector(".fs-navbar_menu-button");
       const menu = document.querySelector(".fs-navbar_menu");
-      if (
-        window.isMenuOpen ||
-        (menu &&
-          (menu.classList.contains("w--open") ||
-            window.getComputedStyle(menu).display !== "none"))
-      ) {
+      if (menu && (menu.classList.contains("is-home-open") || menu.classList.contains("w--open"))) {
         if (menuButton) {
           menuButton.click();
         }

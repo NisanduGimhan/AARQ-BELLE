@@ -22,6 +22,27 @@ body {
   .fs-navbar_menu-button,
   .w-nav-button.fs-navbar_menu-button {
     display: flex !important;
+    position: relative;
+    z-index: 105 !important;
+  }
+
+  .navbar_component:not(.page-navbar) .navbar_logo-link {
+    position: relative;
+    z-index: 105 !important;
+  }
+
+  .navbar_component:not(.page-navbar) .fs-navbar_menu.is-home-open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 95 !important;
+    transform: none !important;
+    visibility: visible !important;
   }
 }
 

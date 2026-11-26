@@ -286,12 +286,13 @@ export function getRenderedPage(config: SiteConfig = siteConfig): string {
     `href="${whatsappUrl}" target="_blank" rel="noopener noreferrer"`
   );
 
-  // 16. Navbar Links: Remove Tours & Desktop Reserve Now text, Link Contact to Footer, Ensure Reviews link is present
+  // 16. Navbar Links: Remove Tours & Desktop Reserve Now text, Link Contact to Footer, Remove FAQ from drawer, Ensure Reviews link is present
   html = html.replace(/<a[^>]*href="\/tours"[^>]*>[\s\S]*?<\/a>/gi, '');
+  html = html.replace(/<a[^>]*href="\/faq"[^>]*>[\s\S]*?<\/a>/gi, '');
   html = html.replace(/<a class="nav-link_item[^"]*"[^>]*>(?:(?!<\/a>)[\s\S])*?>Reserve Now<[\s\S]*?<\/a>/gi, '');
-  html = html.replace(/<div class="fs-navbar_link-host">[\s\S]*?href="\/insights"[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  html = html.replace(/<div class="fs-navbar_link-host">(?:(?!<div class="fs-navbar_link-host">)[\s\S])*?href="\/insights"[\s\S]*?<\/a><\/div>\s*<\/div>/gi, '');
   html = html.replace(
-    /<a class="fs-menu-link[^"]*"[^>]*href="\/reserve-now"[^>]*>/gi,
+    /<a class="fs-menu-link[^"]*"[^>]*href="(?:\/reserve-now|#booking)"[^>]*>/gi,
     `<a class="fs-menu-link w-inline-block" href="${whatsappUrl}" target="_blank" rel="noopener noreferrer">`
   );
   html = html.replace(/href="\/contact"/g, 'href="#footer"');

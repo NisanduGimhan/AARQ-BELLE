@@ -65,7 +65,7 @@ export default function FloatingWhatsApp() {
   const cleanNumber = (
     siteConfig.contact.whatsappNumber ||
     siteConfig.contact.phone ||
-    "94783793366"
+    "94783114414"
   ).replace(/\D/g, "");
   const defaultMessage =
     siteConfig.contact.whatsappMessage ||

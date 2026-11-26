@@ -22,10 +22,20 @@ export function getRenderedPage(config: SiteConfig = siteConfig): string {
     );
   }
 
-  // 2. Hero Background Image (Scroll Zoom Animation)
+  // 2. Hero Background Image (Scroll Zoom Animation) & Top-Center Brand Overlay
   if (config.hero?.image) {
     html = html.replace(/\/images\/carasol_image\.jpg/g, config.hero.image);
   }
+  const heroBrandTitle = config.brand?.name || "AARQ BELLE";
+  html = html.replace(
+    /(<div class="header_background-image">[\s\S]*?<\/div>)(\s*<\/div>\s*<div class="header_ix-trigger")/,
+    `$1
+					<div class="hero-top-scrim" style="position: absolute; inset: 0 0 auto 0; height: 42%; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.18) 60%, rgba(0, 0, 0, 0) 100%); z-index: 1; pointer-events: none;"></div>
+					<div class="hero-brand-overlay" style="position: absolute; top: clamp(5.25rem, 10vh, 7.25rem); left: 50%; transform: translateX(-50%); z-index: 2; width: 100%; max-width: 92vw; text-align: center; pointer-events: none; padding: 0 1rem;">
+						<h1 class="hero-brand-title" style="font-family: 'Didot', Georgia, serif; font-size: clamp(2.1rem, 5vw, 4.5rem); font-weight: 400; letter-spacing: 0.16em; line-height: 1.08; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);">${heroBrandTitle}</h1>
+						<div class="hero-brand-subtitle" style="font-family: 'Qvq 0', cursive, serif; font-size: clamp(1.35rem, 2.7vw, 2.4rem); font-weight: 400; letter-spacing: 0.03em; line-height: 1.25; color: rgba(255, 255, 255, 0.94); text-transform: none; margin-top: 0.3rem; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);">Elegance of love unveiled</div>
+					</div>$2`
+  );
 
   // 3. Hero Headline & Subtitle
   if (config.hero?.title) {
@@ -212,9 +222,13 @@ export function getRenderedPage(config: SiteConfig = siteConfig): string {
     menuImage
   );
 
-  // 11. Contact: Phone
+  // 11. Contact: Phone (keep a single clean phone link in homepage footer)
   if (config.contact?.phone) {
     const cleanPhone = config.contact.phone.replace(/[\s-]/g, '');
+    html = html.replace(
+      /(<div class="footer_conatct-link-wrap u-mb-main"><a class="contact-link w-inline-block"[\s\S]*?<\/a>)\s*<a class="contact-link w-inline-block" href="tel:\+94[^"]*">[\s\S]*?<\/a>/,
+      '$1'
+    );
     html = html.replace(/href="tel:\+94[^"]*"/g, `href="tel:${cleanPhone}"`);
     html = html.replace(/\+94[\s]?77[\s]?63[\s]?111[\s]?84/g, config.contact.phone);
     html = html.replace(/\+94776311184/g, cleanPhone);
@@ -226,7 +240,7 @@ export function getRenderedPage(config: SiteConfig = siteConfig): string {
   }
   if (config.contact?.address) {
     html = html.replace(
-      /(?:Ceylon Wedlock|MiE Weddings), Evergreen Park, Colombo 05\./g,
+      /[A-Za-z0-9 &_-]+, Evergreen Park, Colombo 05\./g,
       config.contact.address
     );
   }
@@ -246,7 +260,7 @@ export function getRenderedPage(config: SiteConfig = siteConfig): string {
   }
 
   // 14. WhatsApp link helper
-  const cleanNumber = (config.contact?.whatsappNumber || config.contact?.phone || "94783793366").replace(/\D/g, "");
+  const cleanNumber = (config.contact?.whatsappNumber || config.contact?.phone || "94783114414").replace(/\D/g, "");
   const defaultMessage = config.contact?.whatsappMessage || "Hello! I would like to inquire about wedding photography availability and packages.";
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(defaultMessage)}`;
 

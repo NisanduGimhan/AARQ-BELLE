@@ -159,7 +159,7 @@ export default function PageFooter() {
                 <div className="footer_link-underline"></div>
               </a>
               <a
-                href={`https://wa.me/${(siteConfig.contact.whatsappNumber || "94783793366").replace(/\D/g, "")}?text=${encodeURIComponent(siteConfig.contact.whatsappMessage || "Hello! I would like to inquire about wedding photography availability and packages.")}`}
+                href={`https://wa.me/${(siteConfig.contact.whatsappNumber || "94783114414").replace(/\D/g, "")}?text=${encodeURIComponent(siteConfig.contact.whatsappMessage || "Hello! I would like to inquire about wedding photography availability and packages.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer_link w-inline-block"

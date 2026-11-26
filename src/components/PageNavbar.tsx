@@ -23,7 +23,7 @@ export default function PageNavbar({ currentPath: propPath }: PageNavbarProps) {
   const isPortfolio = currentPath === "/portfolio" || currentPath.startsWith("/couple");
   const isReviews = currentPath === "/reviews";
 
-  const whatsappUrl = `https://wa.me/${(siteConfig.contact.whatsappNumber || "94783793366").replace(/\D/g, "")}?text=${encodeURIComponent(siteConfig.contact.whatsappMessage || "Hello! I would like to inquire about wedding photography availability and packages.")}`;
+  const whatsappUrl = `https://wa.me/${(siteConfig.contact.whatsappNumber || "94783114414").replace(/\D/g, "")}?text=${encodeURIComponent(siteConfig.contact.whatsappMessage || "Hello! I would like to inquire about wedding photography availability and packages.")}`;
 
   return (
     <div
